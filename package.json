@@ -1,0 +1,14 @@
+{
+  "name": "envisionator",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "eslint jsfxrsequencer.js audio.js maps.js game.js --max-warnings 1",
+    "uglify": "copy jsfxr.js + jsfxrsequencer.js + audio.js + maps.js + game.js bundle.js /b /y && uglifyjs bundle.js -o ugly/bundle.js --toplevel --compress unused=false --mangle --mangle-props keep_quoted=true --hoist_funs --hoist_vars --verbose"
+  },
+  "devDependencies": {
+    "uglify-es": "*",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.7.0"
+  }
+}

@@ -1,0 +1,9 @@
+as3fxr Copyright 2010 Thomas Vian
+
+jsfxr port by https://github.com/mneubrand/jsfxr
+
+as3fxr and jsfxr license: https://www.apache.org/licenses/LICENSE-2.0.html
+
+Morusque - Nurykabe MIDI 01, Contra01:
+    http://ccmixter.org/files/Nurykabe/10176
+    https://creativecommons.org/licenses/by/3.0/

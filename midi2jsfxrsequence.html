@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MIDI to jsfxr sequence</title>
+        <meta charset="utf-8" />
+
+        <script src="jsfxr.js"></script>
+        <script src="jsfxrsequencer.js"></script>
+        <script>
+window.addEventListener('load', () => {
+    let sound = null;
+
+    const convert = () => {
+        const startTime = +document.getElementById('start-time').value;
+        const stopTime = +document.getElementById('stop-time').value;
+        const channelsPerNote = +document.getElementById('channels-per-note').value;
+        const useVelocity = document.getElementById('use-velocity').checked;
+        const adjustSustainDuration = document.getElementById('adjust-sustain').checked;
+
+        const midi = JSON.parse(document.getElementById('json').value);
+        const rate = 1.0 / (60.0 / (midi.header.bpm * midi.header.PPQ));
+
+        const instruments = eval(document.getElementById('instruments').value);
+
+        tracks = midi.tracks.map((track, ti) => {
+            if (instruments[ti] === null) {
+                return [];
+            }
+
+            const notes = [];
+
+            track.notes.forEach(note => {
+                const time = track.startTime + note.time;
+                if (time < startTime - 1e-8 || time > stopTime + 1e-8) {
+                    return;
+                }
+
+                let volume = 1.0;
+
+                const cc7 = track.controlChanges['7'];
+                if (cc7 !== undefined) {
+                    let t = -Infinity;
+                    cc7.forEach(cc => {
+                        if (cc.time <= note.time && cc.time >= t) {
+                            t = cc.time;
+                            volume = cc.value;
+                        }
+                    });
+                }
+
+                notes.push({
+                    time: time - startTime,
+                    instrument: track.id,
+                    volume: volume * (useVelocity ? note.velocity : 1.0),
+                    duration: note.duration,
+                    midiNumber: note.midi,
+                });
+            });
+
+            notes.sort((a, b) => a.time - b.time).forEach((note, i) => {
+                note.timeSinceLast = i === 0 ? note.time : note.time - notes[i - 1].time;
+            });
+
+            let error = 0;
+            return [].concat(...notes.map(note => {
+                const f = (note.timeSinceLast * rate) + error;
+                const i = Math.round(f);
+                error = f - i;
+                return [
+                    Math.round(i),
+                    Math.round(note.duration * rate),
+                    note.midiNumber,
+                    Math.round(note.volume * 255)];
+                }));
+        });
+
+        const data = {
+            rate: rate,
+            fs: 44100,
+            channelsPerNote: channelsPerNote,
+            adjustSustainDuration: adjustSustainDuration,
+            instruments: instruments,
+            tracks: tracks,
+        };
+
+        document.getElementById('output').value = JSON.stringify(data);
+
+        if (sound !== null) {
+            sound.stop();
+        }
+        sound = jsfxrSequence(data);
+    };
+
+    document.getElementById('convert').addEventListener('click', () => {
+        convert();
+    });
+
+    document.getElementById('convert-and-play').addEventListener('click', () => {
+        convert();
+
+        sound.play(true);
+    });
+
+    document.getElementById('play').addEventListener('click', () => {
+        if (sound !== null) {
+            sound.stop();
+            sound.play(true);
+        }
+    });
+
+    document.getElementById('stop').addEventListener('click', () => {
+        if (sound !== null) {
+            sound.stop();
+        }
+    });
+});
+        </script>
+
+        <style>
+.container {
+    display:inline-block;
+}
+textarea {
+    resize:none;
+}
+        </style>
+    </head>
+    <body>
+        <a href="https://tonejs.github.io/MidiConvert/">MIDI to JSON converter</a>
+        <br />
+        <br />
+        <div class="container">
+            <label for="json">MIDI in JSON</label>
+            <br />
+            <textarea id="json" cols="70" rows="20"></textarea>
+        </div>
+        <div class="container">
+            <label for="output">Output</label>
+            <br />
+            <textarea id="output" cols="70" rows="20" autocomplete="off"></textarea>
+        </div>
+        <br />
+        <br />
+        <div class="container">
+            <label for="instruments">Track instrument array</label>
+            <br />
+            <textarea id="instruments" cols="143" rows="16">
+[null,
+[0,,0.24,0.2,0.23,0.54,,,,,,,,,,,,,1,,,,,0.21], // Track 1 example instrument
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+null]</textarea>
+        <div/>
+        <br />
+        <label for="start-time">Start time</label>
+        <input type="number" id="start-time" value="0" />
+        &nbsp;
+        <label for="stop-time">Stop time</label>
+        <input type="number" id="stop-time" value="10000" />
+        &nbsp;
+        <label for="channels-per-note">Channels per note</label>
+        <input type="number" id="channels-per-note" value="5" />
+        <br />
+        <br />
+        <label for="use-velocity">Use key velocity for volume</label>
+        <input type="checkbox" autocomplete="off" id="use-velocity" checked />
+        <br />
+        <label for="adjust-sustain">Adjust sustain duration</label>
+        <input type="checkbox" autocomplete="off" id="adjust-sustain" checked />
+        <br />
+        <br />
+        <p>
+            This converter is an improvised mess. The only CC supported is 7.
+        </p>
+        <button id="convert">Convert</button>
+        <button id="convert-and-play">Convert and play</button>
+        <button id="play">Play</button>
+        <button id="stop">Stop</button>
+    </body>
+</html>
