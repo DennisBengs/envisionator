@@ -15,7 +15,6 @@ window.addEventListener('load', () => {
         const stopTime = +document.getElementById('stop-time').value;
         const channelsPerNote = +document.getElementById('channels-per-note').value;
         const useVelocity = document.getElementById('use-velocity').checked;
-        const adjustSustainDuration = document.getElementById('adjust-sustain').checked;
 
         const midi = JSON.parse(document.getElementById('json').value);
         const rate = 1.0 / (60.0 / (midi.header.bpm * midi.header.PPQ));
@@ -78,7 +77,6 @@ window.addEventListener('load', () => {
             rate: rate,
             fs: 44100,
             channelsPerNote: channelsPerNote,
-            adjustSustainDuration: adjustSustainDuration,
             instruments: instruments,
             tracks: tracks,
         };
@@ -176,9 +174,6 @@ null]</textarea>
         <br />
         <label for="use-velocity">Use key velocity for volume</label>
         <input type="checkbox" autocomplete="off" id="use-velocity" checked />
-        <br />
-        <label for="adjust-sustain">Adjust sustain duration</label>
-        <input type="checkbox" autocomplete="off" id="adjust-sustain" checked />
         <br />
         <br />
         <p>

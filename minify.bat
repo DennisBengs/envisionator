@@ -2,7 +2,7 @@ del bundle.js /q
 del ugly\* /q
 
 copy index.html ugly
-copy sprites.png ugly
+copy sprites-min.png ugly
 copy licenses.txt ugly
 
 call npm run uglify

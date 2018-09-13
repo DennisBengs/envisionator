@@ -42,24 +42,7 @@ const jsfxrSequence = (data, maxElapsedSeconds = 0.1) => {
                 const x = 0.1 * Math.sqrt((1250 * f) / data.fs - 0.1);
                 settings[5] = x;
 
-                // Duration: (again, probably wrong)
-                // t = (x^2 * 100000) / Fs
-                // x = sqrt(Fs * t) / 316.2278
-                // Sustain duration limited to 100000/Fs seconds
-                const aTime = (Math.pow(settings[1] || 0, 2) * 100000) / data.fs;
-                const sTime = (Math.pow(settings[2] || 0, 2) * 100000) / data.fs;
-                const timeDiff = track[n + 1] / data.rate - (aTime + sTime);
-                const sDiff = Math.sqrt(data.fs * Math.abs(timeDiff)) / 316.2278 * Math.sign(timeDiff);
-                const oldS = settings[2];
-                if (data.adjustSustainDuration) {
-                    settings[2] = Math.max(0, Math.min(1, (settings[2] || 0) + sDiff));
-                }
-
                 const src = jsfxr(settings);
-
-                if (data.adjustSustainDuration) {
-                    settings[2] = oldS;
-                }
 
                 pool = {
                     next: 0,
