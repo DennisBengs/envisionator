@@ -526,7 +526,7 @@ const createEntity = (x_, y_, l_, c_, dir_) => {
                 drawSprite(1, 5, e.x, e.y - 1, 0, deco);
             }
             if (e.on) {
-                drawSprite(loopFrame(2, 7, 4), 5, e.x, e.y);
+                drawSprite(2, 5, e.x, e.y);
             }
         };
     }
@@ -769,10 +769,10 @@ const createEntity = (x_, y_, l_, c_, dir_) => {
                 noiseTime -= elapsedSeconds;
                 for (let x = 1; x < mapSize.x - 1; x++) {
                     for (let y = 4; y < mapSize.y - 1; y++) {
-                        drawSprite(loopFrame(13, 10, 3), 9, x, y);
+                        drawSprite(loopFrame(13, 10, 2), 9, x, y);
                     }
                     for (let y = 1; y < 3; y++) {
-                        drawSprite(loopFrame(13, 10, 3), 9, x, y);
+                        drawSprite(loopFrame(13, 10, 2), 9, x, y);
                     }
                 }
             }

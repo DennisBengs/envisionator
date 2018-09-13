@@ -55,27 +55,13 @@ const maps = [[
     '              ' +
     '              ' +
     ' DDDDDDDDDDDD ' +
-    ' oooooooooooo ' +
+    '              ' +
     '  mn          ' +
     '              ' +
     '              ' +
     '              ' +
-    ' oooooooooooo ' +
-    ' CCCCCCCCCCCC ' +
-    '              ',
-
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
-    '              ' +
     '           "  ' +
-    '              ' +
+    ' CCCCCCCCCCCC ' +
     '              ',
 ].concat(baseMaps), [
     ':             ' +
